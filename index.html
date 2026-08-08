@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOUR CLIPS — Shoot. Edit. Engage.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8EF;
+    --paper:#FFFFFF;
+    --ink:#241435;
+    --ink-soft:#5b4d6e;
+    --coral:#FF6B5B;
+    --teal:#1FB8A6;
+    --gold:#F2B705;
+    --lavender:#B79CFF;
+    --line: rgba(36,20,53,0.12);
+    --radius: 22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  /* film perforation divider */
+  .filmstrip{
+    height:22px;
+    background:
+      radial-gradient(circle, var(--ink) 3.5px, transparent 3.6px) 14px 50% / 30px 100%,
+      var(--paper);
+    background-repeat: repeat-x, no-repeat;
+    opacity:0.9;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(255,248,239,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.3rem;
+  }
+  .logo .mark{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,var(--coral),var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    color:white; font-size:1rem; font-weight:800;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .nav-cta{
+    background:var(--ink); color:var(--cream);
+    padding:10px 20px; border-radius:100px;
+    font-weight:600; font-size:0.9rem;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .nav-cta:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(36,20,53,0.25);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:9vh 6vw 8vh;
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    overflow:hidden;
+  }
+  .blob{
+    position:absolute; border-radius:50%; filter:blur(60px); opacity:0.55; z-index:0;
+    animation: float 10s ease-in-out infinite;
+  }
+  .blob1{width:320px;height:320px; background:var(--lavender); top:-80px; left:-60px;}
+  .blob2{width:260px;height:260px; background:var(--gold); bottom:-60px; right:-40px; animation-delay:2s;}
+  .blob3{width:200px;height:200px; background:var(--teal); top:40%; right:10%; animation-delay:4s;}
+  @keyframes float{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(20px,-25px) scale(1.08);}
+  }
+  .eyebrow{
+    position:relative;z-index:1;
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--paper); border:1px solid var(--line);
+    padding:8px 16px; border-radius:100px;
+    font-size:0.85rem; font-weight:600; color:var(--ink-soft);
+    margin-bottom:24px;
+    animation: fadeUp .8s ease both;
+  }
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--coral); animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
+
+  .hero h1{
+    position:relative;z-index:1;
+    font-size:clamp(2.4rem, 7vw, 5.2rem);
+    line-height:1.02;
+    max-width:14ch;
+    animation: fadeUp .9s ease .1s both;
+  }
+  .hero h1 .accent{
+    font-style:italic; font-weight:400;
+    background:linear-gradient(90deg,var(--coral),var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.sub{
+    position:relative;z-index:1;
+    max-width:44ch; margin:22px auto 34px;
+    font-size:1.08rem; color:var(--ink-soft); line-height:1.6;
+    animation: fadeUp .9s ease .2s both;
+  }
+  .hero-ctas{
+    position:relative;z-index:1;
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+    animation: fadeUp .9s ease .3s both;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg,var(--coral),var(--gold));
+    color:white; padding:15px 30px; border-radius:100px;
+    font-weight:700; font-size:1rem; border:none; cursor:pointer;
+    box-shadow:0 10px 30px rgba(255,107,91,0.35);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .btn-primary:hover{transform:translateY(-3px) scale(1.02); box-shadow:0 14px 34px rgba(255,107,91,0.45);}
+  .btn-ghost{
+    background:transparent; color:var(--ink); padding:15px 26px; border-radius:100px;
+    font-weight:700; font-size:1rem; border:1.5px solid var(--ink);
+    transition:background .25s ease, color .25s ease;
+  }
+  .btn-ghost:hover{background:var(--ink); color:var(--cream);}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(24px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- TIMELINE SIGNATURE ---------- */
+  .timeline-wrap{
+    position:relative; z-index:1;
+    margin-top:64px; width:100%; max-width:760px;
+  }
+  .timeline-track{
+    position:relative; height:6px; background:var(--line); border-radius:10px;
+    margin:0 10px;
+  }
+  .timeline-fill{
+    position:absolute; top:0; left:0; height:100%; width:0%;
+    background:linear-gradient(90deg,var(--coral),var(--teal),var(--gold));
+    border-radius:10px;
+    animation: fillTrack 4.5s ease-in-out infinite;
+  }
+  @keyframes fillTrack{
+    0%{width:0%;} 45%{width:100%;} 55%{width:100%;} 100%{width:0%;}
+  }
+  .timeline-playhead{
+    position:absolute; top:50%; width:16px;height:16px; border-radius:50%;
+    background:var(--ink); transform:translate(-50%,-50%);
+    box-shadow:0 0 0 5px rgba(36,20,53,0.12);
+    animation: movePlayhead 4.5s ease-in-out infinite;
+  }
+  @keyframes movePlayhead{
+    0%{left:0%;} 45%{left:100%;} 55%{left:100%;} 100%{left:0%;}
+  }
+  .timeline-labels{
+    display:flex; justify-content:space-between; margin-top:14px;
+    font-size:0.8rem; font-weight:700; letter-spacing:0.06em; color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:9vh 6vw;}
+  .section-head{max-width:640px; margin:0 auto 50px; text-align:center;}
+  .section-head .kicker{
+    display:block; font-weight:700; color:var(--coral); letter-spacing:0.08em;
+    text-transform:uppercase; font-size:0.8rem; margin-bottom:10px;
+  }
+  .section-head h2{font-size:clamp(1.8rem,4vw,2.6rem);}
+
+  /* services as real timeline stages IN / EDIT / OUT */
+  .stage-row{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+    max-width:1000px; margin:0 auto;
+  }
+  .stage-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:32px 26px; position:relative; overflow:hidden;
+    opacity:0; transform:translateY(30px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .stage-card.in-view{opacity:1; transform:translateY(0);}
+  .stage-card .tc{
+    font-family:'Fraunces',serif; font-weight:700; font-size:0.78rem;
+    color:var(--ink-soft); opacity:0.6; margin-bottom:18px; letter-spacing:0.05em;
+  }
+  .stage-card h3{font-size:1.4rem; margin-bottom:10px;}
+  .stage-card p{color:var(--ink-soft); font-size:0.95rem; line-height:1.55;}
+  .stage-card .icon{
+    width:52px;height:52px;border-radius:16px; display:flex;align-items:center;justify-content:center;
+    font-size:1.5rem; margin-bottom:16px;
+  }
+  .stage-card:nth-child(1) .icon{background:rgba(255,107,91,0.15);}
+  .stage-card:nth-child(2) .icon{background:rgba(31,184,166,0.15);}
+  .stage-card:nth-child(3) .icon{background:rgba(242,183,5,0.18);}
+
+  /* portfolio */
+  .work-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px; max-width:1000px; margin:0 auto;
+  }
+  .work-card{
+    aspect-ratio:4/5; border-radius:var(--radius); position:relative; overflow:hidden;
+    display:flex; align-items:flex-end; padding:20px; color:white; font-weight:700;
+    background-size:cover; background-position:center;
+    opacity:0; transform:translateY(30px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .work-card.in-view{opacity:1; transform:translateY(0);}
+  .work-card::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.65));
+  }
+  .work-card span{position:relative; z-index:1;}
+  .w1{background:linear-gradient(135deg,var(--coral),var(--lavender));}
+  .w2{background:linear-gradient(135deg,var(--teal),var(--gold));}
+  .w3{background:linear-gradient(135deg,var(--lavender),var(--teal));}
+  .w4{background:linear-gradient(135deg,var(--gold),var(--coral));}
+  .work-note{
+    text-align:center; color:var(--ink-soft); font-size:0.9rem; margin-top:24px;
+  }
+
+  /* ---------- BOOKING ---------- */
+  .booking{
+    background:var(--ink); color:var(--cream); border-radius:32px;
+    margin:0 6vw; padding:8vh 6vw; position:relative; overflow:hidden;
+  }
+  .booking .blob{opacity:0.25;}
+  .booking .section-head h2{color:var(--cream);}
+  .booking .section-head .kicker{color:var(--gold);}
+  .booking .section-head p{color:rgba(255,248,239,0.7); margin-top:12px;}
+
+  .form-card{
+    position:relative; z-index:1;
+    max-width:560px; margin:0 auto; background:var(--paper); color:var(--ink);
+    border-radius:var(--radius); padding:36px 30px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.35);
+  }
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block; font-size:0.82rem; font-weight:700; margin-bottom:7px; color:var(--ink-soft);
+  }
+  .field input, .field select, .field textarea{
+    width:100%; padding:13px 14px; border-radius:12px; border:1.5px solid var(--line);
+    font-family:'Plus Jakarta Sans', sans-serif; font-size:0.95rem; background:var(--cream);
+    color:var(--ink); transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:var(--coral); box-shadow:0 0 0 4px rgba(255,107,91,0.15);
+  }
+  .field textarea{resize:vertical; min-height:80px;}
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .book-btn{
+    width:100%; margin-top:6px;
+    background:linear-gradient(90deg,var(--coral),var(--gold));
+    color:white; border:none; padding:16px; border-radius:100px;
+    font-weight:800; font-size:1.02rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    box-shadow:0 12px 26px rgba(255,107,91,0.3);
+    transition:transform .2s ease;
+  }
+  .book-btn:hover{transform:translateY(-2px);}
+  .form-note{font-size:0.78rem; color:var(--ink-soft); text-align:center; margin-top:12px;}
+
+  /* ---------- FLOATING BOOK BUTTON ---------- */
+  .float-book{
+    position:fixed; bottom:22px; right:22px; z-index:60;
+    background:linear-gradient(90deg,var(--coral),var(--gold));
+    color:white; padding:15px 22px; border-radius:100px; font-weight:800;
+    box-shadow:0 14px 30px rgba(255,107,91,0.4);
+    display:flex; align-items:center; gap:8px; cursor:pointer; border:none;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+
+  /* ---------- THANK YOU OVERLAY ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:100; background:rgba(36,20,53,0.55);
+    backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .overlay.show{display:flex; animation: fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .thanks-card{
+    background:var(--paper); border-radius:28px; padding:50px 34px; max-width:440px; width:100%;
+    text-align:center; position:relative;
+    animation: popIn .45s cubic-bezier(.2,.9,.3,1.3);
+  }
+  @keyframes popIn{from{opacity:0; transform:scale(0.85) translateY(20px);} to{opacity:1; transform:scale(1) translateY(0);}}
+  .check-circle{
+    width:78px;height:78px;border-radius:50%; margin:0 auto 20px;
+    background:linear-gradient(135deg,var(--teal),var(--gold));
+    display:flex; align-items:center; justify-content:center; color:white; font-size:2.2rem;
+    animation: popIn .5s .1s cubic-bezier(.2,.9,.3,1.3) both;
+  }
+  .thanks-card h2{font-size:2rem; margin-bottom:10px;}
+  .thanks-card .big-thanks{
+    font-size:2.6rem; font-family:'Fraunces',serif; font-style:italic;
+    background:linear-gradient(90deg,var(--coral),var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-bottom:14px;
+  }
+  .thanks-card p{color:var(--ink-soft); line-height:1.6; margin-bottom:24px;}
+  .thanks-card button{
+    background:var(--ink); color:var(--cream); border:none; padding:13px 26px;
+    border-radius:100px; font-weight:700; cursor:pointer;
+  }
+
+  footer{
+    text-align:center; padding:6vh 6vw 5vh; color:var(--ink-soft); font-size:0.85rem;
+  }
+  footer .logo{justify-content:center; margin-bottom:10px;}
+
+  @media(max-width:760px){
+    .stage-row{grid-template-columns:1fr;}
+    .two-col{grid-template-columns:1fr;}
+    .booking{margin:0 4vw; border-radius:24px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="mark">YC</span> YOUR CLIPS</div>
+  <a href="#book" class="nav-cta">Book Now</a>
+</nav>
+
+<div class="hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+
+  <div class="eyebrow"><span class="dot"></span> Now booking first clients</div>
+  <h1>We shoot it. We cut it. <span class="accent">You post it.</span></h1>
+  <p class="sub">YOUR CLIPS is a one-person edit studio for reels, weddings, YouTube and personal projects — built frame by frame, just for you. Just believe on us, it's your clips.</p>
+
+  <div class="hero-ctas">
+    <button class="btn-primary" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book your slot</button>
+    <a href="#work" class="btn-ghost">See the work</a>
+  </div>
+
+  <div class="timeline-wrap">
+    <div class="timeline-track">
+      <div class="timeline-fill"></div>
+      <div class="timeline-playhead"></div>
+    </div>
+    <div class="timeline-labels"><span>Shoot</span><span>Edit</span><span>Engage</span></div>
+  </div>
+</div>
+
+<div class="filmstrip"></div>
+
+<section id="stages">
+  <div class="section-head">
+    <span class="kicker">How every project runs</span>
+    <h2>One timeline. Three real stages.</h2>
+  </div>
+  <div class="stage-row">
+    <div class="stage-card"><div class="tc">00:00 — IN</div>
+      <div class="icon">🎬</div>
+      <h3>Shoot</h3>
+      <p>We plan the shot list and capture your footage — or work with clips you already have. Nothing wasted, nothing generic.</p>
+    </div>
+    <div class="stage-card"><div class="tc">00:24 — CUT</div>
+      <div class="icon">✂️</div>
+      <h3>Edit</h3>
+      <p>Colour, pacing, sound and story get shaped into something that actually holds attention — matched to where it's going.</p>
+    </div>
+    <div class="stage-card"><div class="tc">00:48 — OUT</div>
+      <div class="icon">🚀</div>
+      <h3>Engage</h3>
+      <p>Delivered in the right format for reels, YouTube or your feed — with guidance on posting it for real engagement.</p>
+    </div>
+  </div>
+</section>
+
+<div class="filmstrip"></div>
+
+<section id="work">
+  <div class="section-head">
+    <span class="kicker">Recent frames</span>
+    <h2>A young studio, already in motion</h2>
+  </div>
+  <div class="work-grid">
+    <div class="work-card w1"><span>Reels & Shorts</span></div>
+    <div class="work-card w2"><span>Wedding Highlights</span></div>
+    <div class="work-card w3"><span>YouTube Edits</span></div>
+    <div class="work-card w4"><span>Personal Projects</span></div>
+  </div>
+  <p class="work-note">More drops landing soon — @yourclips_123 on Instagram.</p>
+</section>
+
+<section id="book">
+  <div class="booking">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="section-head">
+      <span class="kicker">Let's lock your slot</span>
+      <h2>Book now — it lands straight on WhatsApp</h2>
+      <p>Fill this in and tap send. It opens WhatsApp with everything pre-filled to YOUR CLIPS — you just hit send.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="bookingForm">
+        <div class="field">
+          <label for="name">Your name</label>
+          <input type="text" id="name" required placeholder="e.g. Priya Sharma">
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="phone">Your WhatsApp number</label>
+            <input type="tel" id="phone" required placeholder="98765 43210">
+          </div>
+          <div class="field">
+            <label for="location">Location</label>
+            <input type="text" id="location" required placeholder="City / area">
+          </div>
+        </div>
+        <div class="field">
+          <label for="edittype">What do you want edited?</label>
+          <select id="edittype" required>
+            <option value="">Choose one</option>
+            <option>Instagram Reel / Short</option>
+            <option>Wedding Highlight Film</option>
+            <option>YouTube Video</option>
+            <option>Birthday / Personal Event</option>
+            <option>Brand / Business Promo</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="budget">Your budget (₹)</label>
+          <input type="text" id="budget" required placeholder="e.g. 1500 – 3000">
+        </div>
+        <div class="field">
+          <label for="notes">Anything else to discuss?</label>
+          <textarea id="notes" placeholder="Footage length, deadline, style you like..."></textarea>
+        </div>
+        <button type="submit" class="book-btn">📲 Book Now on WhatsApp</button>
+        <p class="form-note">Opens WhatsApp with your booking pre-filled — just tap send there to confirm.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo"><span class="mark">YC</span> YOUR CLIPS</div>
+  <p>we will shoot 📸 · we will edit 🎬 · we will engage your audience 👥</p>
+</footer>
+
+<button class="float-book" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">📲 Book Now</button>
+
+<div class="overlay" id="thanksOverlay">
+  <div class="thanks-card">
+    <div class="check-circle">✓</div>
+    <div class="big-thanks">Thank you!</div>
+    <h2>Your slot is booked</h2>
+    <p>Your booking has been sent — YOUR CLIPS will contact you within 24 hrs to confirm the details.</p>
+    <button onclick="document.getElementById('thanksOverlay').classList.remove('show')">Done</button>
+  </div>
+</div>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.stage-card, .work-card');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in-view'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // WhatsApp booking
+  const CLIPS_NUMBER = "917901311789"; // country code 91 + number
+
+  document.getElementById('bookingForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const location = document.getElementById('location').value.trim();
+    const edittype = document.getElementById('edittype').value;
+    const budget = document.getElementById('budget').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+
+    const message =
+`New booking from YOUR CLIPS website 🎬
+
+Name: ${name}
+WhatsApp: ${phone}
+Location: ${location}
+Edit type: ${edittype}
+Budget: ₹${budget}
+Notes: ${notes || "—"}`;
+
+    const url = `https://wa.me/${CLIPS_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+
+    document.getElementById('thanksOverlay').classList.add('show');
+    this.reset();
+  });
+</script>
+
+</body>
+</html>
