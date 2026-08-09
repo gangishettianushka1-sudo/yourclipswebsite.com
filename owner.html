@@ -109,6 +109,42 @@
   </div>
 
   <div class="card">
+    <span class="badge">Live site</span>
+    <h2>Your website, right now</h2>
+    <p>This is exactly what visitors see. Refresh after uploading or editing to check your changes.</p>
+    <button class="refresh-btn" onclick="document.getElementById('sitePreview').src=document.getElementById('sitePreview').src" style="margin-bottom:12px;">🔄 Refresh preview</button>
+    <iframe id="sitePreview" src="index.html" style="width:100%; height:420px; border:1px solid var(--line); border-radius:14px; background:#000;"></iframe>
+    <p style="margin-top:8px;"><a href="index.html" target="_blank">Open full site in a new tab ↗</a></p>
+  </div>
+
+  <div class="card">
+    <span class="badge">GitHub connection</span>
+    <h2>Connect to save text edits</h2>
+    <p>To let this page save text changes to your live site, paste a GitHub access token below (created once, stays only on this device — never uploaded anywhere).</p>
+    <ol style="margin-top:4px;">
+      <li>On GitHub, go to your profile picture → <strong>Settings</strong> → scroll down to <strong>Developer settings</strong></li>
+      <li><strong>Personal access tokens → Fine-grained tokens → Generate new token</strong></li>
+      <li>Repository access: choose <strong>Only select repositories</strong> → pick <code>yourclipswebsite.com</code></li>
+      <li>Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to <strong>Read and write</strong></li>
+      <li>Generate, then copy the token (starts with <code>github_pat_...</code>) and paste it below</li>
+    </ol>
+    <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:10px;">
+      <input type="password" id="ghToken" placeholder="Paste GitHub token here" style="flex:1; min-width:200px; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); background:#0d0a06; color:var(--ink);">
+      <button class="refresh-btn" onclick="saveToken()">💾 Save token</button>
+    </div>
+    <p id="tokenStatus" class="empty-note" style="margin-top:8px;"></p>
+  </div>
+
+  <div class="card">
+    <span class="badge">Website text</span>
+    <h2>Edit the words on your site</h2>
+    <p>Change anything below, then tap Save — it updates the live site directly.</p>
+    <div id="textFields" style="margin-top:14px; display:flex; flex-direction:column; gap:14px;"></div>
+    <button class="refresh-btn" id="saveTextBtn" onclick="saveTextEdits()" style="margin-top:16px;">💾 Save changes to live site</button>
+    <p id="textStatus" class="empty-note" style="margin-top:10px;"></p>
+  </div>
+
+  <div class="card">
     <span class="badge">Portfolio</span>
     <h2>Upload photos & edited videos directly</h2>
     <p>Pick a file below and tap upload — it goes straight onto the website, no GitHub app needed.</p>
@@ -164,6 +200,9 @@
       document.getElementById('gate').style.display = 'none';
       document.getElementById('dash').style.display = 'block';
       loadPreview();
+      loadTextFields();
+      const savedToken = localStorage.getItem('yc_gh_token');
+      if(savedToken){ document.getElementById('ghToken').value = savedToken; document.getElementById('tokenStatus').textContent = "✅ Token saved on this device."; }
     } else {
       document.getElementById('gateError').textContent = "Wrong passcode, try again.";
     }
@@ -274,6 +313,103 @@
     }
   }
   loadVisitorCount();
+
+  // ===== Text editing via GitHub =====
+  const EDIT_FIELDS = [
+    {key:'eyebrow', label:'Small badge above headline'},
+    {key:'h1main', label:'Main headline (first part)'},
+    {key:'h1accent', label:'Main headline (highlighted part)'},
+    {key:'sub', label:'Intro paragraph'},
+    {key:'stage1title', label:'Stage 1 title'},
+    {key:'stage1desc', label:'Stage 1 description'},
+    {key:'stage2title', label:'Stage 2 title'},
+    {key:'stage2desc', label:'Stage 2 description'},
+    {key:'stage3title', label:'Stage 3 title'},
+    {key:'stage3desc', label:'Stage 3 description'},
+    {key:'footertag', label:'Footer tagline'}
+  ];
+
+  function saveToken(){
+    const token = document.getElementById('ghToken').value.trim();
+    if(!token){ document.getElementById('tokenStatus').textContent = "Paste a token first."; return; }
+    localStorage.setItem('yc_gh_token', token);
+    document.getElementById('tokenStatus').textContent = "✅ Token saved on this device.";
+  }
+
+  async function fetchIndexHtml(){
+    const res = await fetch(`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/index.html?t=${Date.now()}`);
+    if(!res.ok) throw new Error("Could not load site content");
+    return await res.text();
+  }
+
+  async function loadTextFields(){
+    const container = document.getElementById('textFields');
+    container.innerHTML = '<p class="empty-note">Loading current text…</p>';
+    try{
+      const html = await fetchIndexHtml();
+      container.innerHTML = "";
+      EDIT_FIELDS.forEach(f=>{
+        const re = new RegExp(`<!--EDIT:${f.key}-->([\\s\\S]*?)<!--\\/EDIT-->`);
+        const match = html.match(re);
+        const value = match ? match[1] : "";
+        const wrap = document.createElement('div');
+        const isLong = value.length > 60;
+        wrap.innerHTML = `
+          <label style="display:block; font-size:0.82rem; font-weight:700; color:var(--ink-soft); margin-bottom:6px;">${f.label}</label>
+          ${isLong
+            ? `<textarea data-field="${f.key}" rows="3" style="width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); background:#0d0a06; color:var(--ink); font-family:inherit; font-size:0.92rem;">${value}</textarea>`
+            : `<input data-field="${f.key}" value="${value.replace(/"/g,'&quot;')}" style="width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid var(--line); background:#0d0a06; color:var(--ink); font-size:0.92rem;">`
+          }`;
+        container.appendChild(wrap);
+      });
+    } catch(err){
+      container.innerHTML = '<p class="empty-note">Could not load current text. Try refreshing.</p>';
+    }
+  }
+
+  async function saveTextEdits(){
+    const token = localStorage.getItem('yc_gh_token');
+    const status = document.getElementById('textStatus');
+    const btn = document.getElementById('saveTextBtn');
+    if(!token){ status.textContent = "Connect your GitHub token above first."; return; }
+
+    btn.disabled = true;
+    status.textContent = "Saving…";
+    try{
+      // Get current file + its sha (required by GitHub to update a file)
+      const getRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if(!getRes.ok) throw new Error("Could not read current site file");
+      const fileData = await getRes.json();
+      let html = atob(fileData.content.replace(/\n/g, ''));
+
+      // Replace each field's marked region with the new value
+      document.querySelectorAll('#textFields [data-field]').forEach(el=>{
+        const key = el.dataset.field;
+        const newVal = el.value;
+        const re = new RegExp(`(<!--EDIT:${key}-->)([\\s\\S]*?)(<!--\\/EDIT-->)`);
+        html = html.replace(re, `$1${newVal}$3`);
+      });
+
+      const putRes = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/index.html`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: "Update site text from owner dashboard",
+          content: btoa(unescape(encodeURIComponent(html))),
+          sha: fileData.sha,
+          branch: GH_BRANCH
+        })
+      });
+      if(!putRes.ok) throw new Error("Save failed");
+      status.textContent = "✅ Saved! Refresh the live preview above in a minute to see it.";
+    } catch(err){
+      status.textContent = "❌ Couldn't save — check your token has write access, then try again.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
 </script>
 
 </body>
